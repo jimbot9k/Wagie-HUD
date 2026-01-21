@@ -1,0 +1,22 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "wagie-hud",
+  "outputfilename": "wagie-hud",
+  "frontend:dir": "../app",
+  "frontend:install": "npm install",
+  "frontend:build": "npm run build:desktop",
+  "frontend:dev:watcher": "npm run dev",
+  "frontend:dev:serverUrl": "auto",
+  "wailsjsdir": "./bindings",
+  "author": {
+    "name": "James Robins",
+    "email": "knockknockitsjimmy@outlook.com"
+  },
+  "info": {
+    "companyName": "",
+    "productName": "Wagie HUD",
+    "productVersion": "0.1.0",
+    "copyright": "",
+    "comments": "The wagie income idle game"
+  }
+}
