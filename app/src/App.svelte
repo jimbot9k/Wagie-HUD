@@ -5,10 +5,6 @@
   import Button from '$components/Button.svelte';
   import TopBar from '$components/TopBar.svelte';
   import WagieStats from '$components/WagieStats.svelte';
-  import LineChart from '$components/LineChart.svelte';
-  import BossScreen from '$components/BossScreen.svelte';
-  import SetWagieModal from '$components/SetWagieModal.svelte';
-  import SetCagieModal from '$components/SetCagieModal.svelte';
   import { notifications } from '$lib/notifications.svelte';
   import { appState } from '$lib/appState.svelte';
 
@@ -16,7 +12,19 @@
   let wagieModalOpen = $state(false);
   let bossMode = $state(false);
 
-  // Load persisted state, catch up any offline earnings, then tick every second
+  // Lazy-loaded chunks — each import() creates a separate split point so
+  // Chart.js, BossScreen, and the two modals are excluded from the initial bundle.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let BossScreen = $state<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let SetWagieModal = $state<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let SetCagieModal = $state<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let LineChart = $state<any>(null);
+
+  // Load persisted state, catch up any offline earnings, then tick every second.
+  // Defer LineChart (drags in all of Chart.js) until after the first paint.
   onMount(() => {
     const catchupEarned = appState.load();
     if (catchupEarned > 0) {
@@ -26,8 +34,35 @@
       );
     }
     const id = setInterval(() => appState.tick(), 1000);
+
+    requestAnimationFrame(() => {
+      import('$components/LineChart.svelte').then((m) => (LineChart = m.default));
+    });
+
     return () => clearInterval(id);
   });
+
+  // Load BossScreen only the first time boss mode is activated.
+  $effect(() => {
+    if (bossMode && !BossScreen) {
+      import('$components/BossScreen.svelte').then((m) => (BossScreen = m.default));
+    }
+  });
+
+  // Load each modal chunk on first open and immediately show it.
+  async function openWagieModal() {
+    if (!SetWagieModal) {
+      SetWagieModal = (await import('$components/SetWagieModal.svelte')).default;
+    }
+    wagieModalOpen = true;
+  }
+
+  async function openCagieModal() {
+    if (!SetCagieModal) {
+      SetCagieModal = (await import('$components/SetCagieModal.svelte')).default;
+    }
+    cagieModalOpen = true;
+  }
 
   // Chart period selector
   type ChartPeriod = 'today' | '7d' | '30d' | 'lifetime';
@@ -60,11 +95,17 @@
   }
 </script>
 
-<SetWagieModal bind:open={wagieModalOpen} />
-<SetCagieModal bind:open={cagieModalOpen} />
+{#if SetWagieModal}
+  <SetWagieModal bind:open={wagieModalOpen} />
+{/if}
+{#if SetCagieModal}
+  <SetCagieModal bind:open={cagieModalOpen} />
+{/if}
 
 {#if bossMode}
-  <BossScreen onReturn={() => (bossMode = false)} />
+  {#if BossScreen}
+    <BossScreen onReturn={() => (bossMode = false)} />
+  {/if}
 {:else}
   <Layout>
     <TopBar
@@ -74,13 +115,13 @@
         {
           label: 'SET MY CAGIE',
           color: 'var(--color-negative-interactive)',
-          onclick: () => (cagieModalOpen = true),
+          onclick: openCagieModal,
           title: 'Configure your work schedule',
         },
         {
           label: 'SET MY WAGIE',
           color: 'var(--color-positive-interactive)',
-          onclick: () => (wagieModalOpen = true),
+          onclick: openWagieModal,
           title: 'Configure your salary',
         },
       ]}
@@ -131,11 +172,13 @@
               </div>
             </div>
           {/snippet}
-          <LineChart
-            labels={chartData.labels}
-            datasets={chartDatasets}
-            ariaLabel="Earnings over {PERIOD_LABELS[chartPeriod].toLowerCase()}"
-          />
+          {#if LineChart}
+            <LineChart
+              labels={chartData.labels}
+              datasets={chartDatasets}
+              ariaLabel="Earnings over {PERIOD_LABELS[chartPeriod].toLowerCase()}"
+            />
+          {/if}
         </Card>
       </section>
     </main>
