@@ -1,15 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&display=swap');
+
 :root {
   /* Colors */
-  --color-primary: #3b82f6;
-  --color-primary-dark: #2563eb;
-  --color-background: #0f172a;
-  --color-surface: #1e293b;
-  --color-text: #f1f5f9;
-  --color-text-muted: #94a3b8;
-  --color-border: #334155;
+  --color-primary: #71b9cc;
+  --color-secondary: #312d2d;
+  --color-positive-interactive: #cc71c4;
+  --color-negative-interactive: #d6687e;
+  --color-success: #a1cc71;
+  --color-error: #ec2850;
+  --color-text: #000000;
+  --color-text-light: #ffffff;
+  --color-background: #0089b9;
+
+  /* Drop shadow */
+  --drop-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 
   /* Typography */
-  --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-family: 'Geist Mono', monospace;
   --font-size-base: 16px;
 
   /* Spacing */
@@ -28,6 +35,8 @@ html {
   font-size: var(--font-size-base);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: 100%;
+  overflow: hidden;
 }
 
 body {
@@ -35,6 +44,97 @@ body {
   background-color: var(--color-background);
   color: var(--color-text);
   line-height: 1.5;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Allow scroll on touch devices */
+@media (max-width: 1024px) {
+  html,
+  body {
+    overflow: auto;
+    height: auto;
+  }
+}
+
+/* Typography */
+h1 {
+  font-size: 48px;
+  font-weight: 600;
+  color: var(--color-text-light);
+}
+
+h2 {
+  font-size: 36px;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+p {
+  font-size: 18px;
+  font-weight: 400;
+}
+
+/* Buttons */
+button {
+  font-family: var(--font-family);
+  font-size: 24px;
+  font-weight: 400;
+  border-radius: 10px;
+  box-shadow: var(--drop-shadow);
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  h1 {
+    font-size: 32px;
+  }
+  h2 {
+    font-size: 24px;
+  }
+  h3 {
+    font-size: 16px;
+  }
+  p {
+    font-size: 15px;
+  }
+  button {
+    font-size: 18px;
+  }
+}
+
+/* Phone */
+@media (max-width: 640px) {
+  h1 {
+    font-size: 22px;
+  }
+  h2 {
+    font-size: 18px;
+  }
+  h3 {
+    font-size: 14px;
+  }
+  p {
+    font-size: 13px;
+  }
+  button {
+    font-size: 14px;
+  }
+}
+
+/* Cards */
+.card {
+  border-radius: 10px;
+  box-shadow: var(--drop-shadow);
+}
+
+/* Top bar */
+.top-bar {
+  box-shadow: var(--drop-shadow);
 }
 
 /* Disable text selection in Wails for native feel */

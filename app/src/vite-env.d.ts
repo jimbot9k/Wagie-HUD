@@ -1,8 +1,12 @@
 /// <reference types="svelte" />
 /// <reference types="vite/client" />
 
-declare const __IS_WAILS__: boolean;
-declare const __IS_WEB__: boolean;
+declare module '*.svg' {
+  const url: string;
+  export default url;
+}
+
+declare const __PLATFORM__: 'desktop' | 'web';
 
 interface Window {
   go?: {

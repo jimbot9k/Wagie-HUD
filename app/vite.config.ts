@@ -13,6 +13,7 @@ export default defineConfig(({ mode }) => {
       alias: {
         $lib: resolve(__dirname, './src/lib'),
         $components: resolve(__dirname, './src/components'),
+        $assets: resolve(__dirname, './src/assets'),
       },
     },
     build: {
@@ -23,8 +24,7 @@ export default defineConfig(({ mode }) => {
       target: 'esnext',
     },
     define: {
-      __IS_WAILS__: JSON.stringify(isDesktop),
-      __IS_WEB__: JSON.stringify(!isDesktop),
+      __PLATFORM__: JSON.stringify(isDesktop ? 'desktop' : 'web'),
     },
     server: {
       port: 5173,

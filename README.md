@@ -53,6 +53,38 @@ cd app && npm install && cd ..
 ./scripts/run-desktop.sh
 ```
 
+## Testing
+
+Tests are written with [Vitest](https://vitest.dev/) and cover all application logic in `app/src/lib/` (state management, storage, notifications, platform detection). Components are excluded from the test suite.
+
+```bash
+cd app
+
+# Run all tests once
+npm test
+
+# Watch mode (re-runs on file changes)
+npm run test:watch
+
+# Run tests and generate a coverage report
+npm run test:coverage
+```
+
+Coverage reports are written to `app/coverage/`. Open `app/coverage/index.html` in a browser for the HTML report.
+
+### Coverage thresholds
+
+The project enforces **≥ 80 %** across lines, functions, branches, and statements. The CI run (`npm test`) will exit non-zero if thresholds are not met.
+
+### Test files
+
+| File | What it covers |
+|------|---------------|
+| `src/lib/__tests__/platform.test.ts` | `getPlatform`, `isWeb`, `isDesktop`, `onWeb`, `onDesktop` |
+| `src/lib/__tests__/storage.test.ts` | `LocalStorage` get / set / remove, JSON error handling |
+| `src/lib/__tests__/notifications.test.ts` | `NotificationStore` add, auto-dismiss, cap at 5, dismiss |
+| `src/lib/__tests__/appState.test.ts` | `AppStateClass` — schedule, rates, stats, chart data, tick/cope/poop, persistence, catch-up earnings |
+
 ## Development
 
 Desktop (hot reload):

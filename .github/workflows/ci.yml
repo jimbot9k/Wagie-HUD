@@ -1,0 +1,99 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  checks: write        # required by dorny/test-reporter
+  pull-requests: write # required by dorny/test-reporter
+
+jobs:
+  ci:
+    name: Type Check / Build / Lint / Test / Audit
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      # ── Type checks ──────────────────────────────────────────────────────
+      - name: Type check (svelte-check)
+        run: npm run check
+
+      - name: Type check (tsc --noEmit)
+        run: npx tsc --noEmit
+
+      # ── Build ────────────────────────────────────────────────────────────
+      - name: Build
+        run: |
+          BUILD_OUTPUT=$(npm run build 2>&1)
+          echo "$BUILD_OUTPUT"
+
+          # Post bundle sizes to the job summary (visible from the PR checks page)
+          echo "## 📦 Build Output" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "$BUILD_OUTPUT" | grep -E "dist/|✓ built" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      # ── Lint ─────────────────────────────────────────────────────────────
+      # The problem matcher turns ESLint compact output into inline PR annotations
+      - name: Lint (ESLint)
+        run: |
+          echo "::add-matcher::${{ github.workspace }}/.github/eslint-matcher.json"
+          npm run lint -- --format compact
+          echo "::remove-matcher owner=eslint-compact::"
+
+      - name: Format check (Prettier)
+        run: npx prettier --check .
+
+      # ── Tests ────────────────────────────────────────────────────────────
+      - name: Unit tests
+        run: |
+          npx vitest run \
+            --reporter=verbose \
+            --reporter=junit \
+            --outputFile.junit=./test-results/junit.xml
+
+      # Publishes a "Unit Tests" check with per-test pass/fail on the PR
+      - name: Publish test results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Unit Tests
+          path: app/test-results/junit.xml
+          reporter: java-junit
+          fail-on-error: true
+
+      # ── Security audit ───────────────────────────────────────────────────
+      - name: Security audit
+        run: |
+          echo "## 🔒 Security Audit" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          AUDIT=$(npm audit --audit-level=critical 2>&1) || AUDIT_FAILED=true
+
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "$AUDIT" | tail -20 >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+          if [ "$AUDIT_FAILED" = "true" ]; then
+            echo "::error::npm audit found critical vulnerabilities"
+            exit 1
+          fi
