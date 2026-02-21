@@ -1,4 +1,4 @@
-# Wagie HUD
+# WAGIE HUD
 
 The wagie income idle game.
 

@@ -109,7 +109,7 @@
 {:else}
   <Layout>
     <TopBar
-      title="Wagie HUD"
+      title="WAGIE HUD"
       earning={appState.isEarning}
       rightButtons={[
         {
