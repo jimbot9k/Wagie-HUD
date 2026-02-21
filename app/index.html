@@ -37,7 +37,7 @@
       property="og:description"
       content="Watch your money grow as you slave away in your gilded cage. A satirical earnings tracker for the chronically employed."
     />
-    <meta property="og:image" content="https://wagiehud.meme/wagie.svg" />
+    <meta property="og:image" content="https://wagiehud.meme/wagie.png" />
     <meta property="og:site_name" content="WAGIE HUD" />
     <meta property="og:locale" content="en_US" />
 
@@ -51,7 +51,7 @@
       name="twitter:description"
       content="Watch your money grow as you slave away in your gilded cage. A satirical earnings tracker for the chronically employed."
     />
-    <meta name="twitter:image" content="https://wagiehud.meme/wagie.svg" />
+    <meta name="twitter:image" content="https://wagiehud.meme/wagie.png" />
 
     <!-- Structured data -->
     <script type="application/ld+json">
@@ -76,7 +76,43 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <noscript>
+        <div
+          style="
+            font-family: 'Geist Mono', monospace;
+            background: #0089b9;
+            color: #ffffff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            padding: 2rem;
+            text-align: center;
+            box-sizing: border-box;
+          "
+        >
+          <h1 style="font-size: clamp(1.5rem, 5vw, 3rem); font-weight: 600; margin: 0">
+            WAGIE HUD
+          </h1>
+          <p
+            style="
+              font-size: clamp(1rem, 2.5vw, 1.25rem);
+              max-width: 520px;
+              margin: 0;
+              opacity: 0.9;
+            "
+          >
+            JavaScript is disabled. Your earnings aren't going to count themselves.
+          </p>
+          <p style="font-size: 0.9rem; opacity: 0.65; margin: 0">
+            Enable JavaScript to start tracking your gilded cage.
+          </p>
+        </div>
+      </noscript>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
