@@ -28,7 +28,7 @@ func (a *App) shutdown(ctx context.Context) {
 
 // Greet returns a greeting message
 func (a *App) Greet(name string) string {
-	return fmt.Sprintf("Hello, %s! Welcome to Wagie HUD.", name)
+	return fmt.Sprintf("Hello, %s! Welcome to WAGIE HUD.", name)
 }
 
 // SystemInfo holds system information

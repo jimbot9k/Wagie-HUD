@@ -16,7 +16,7 @@
   }
 
   let {
-    title = 'Wagie HUD',
+    title = 'WAGIE HUD',
     earning = false,
     rightButtons = [{ label: 'One' }, { label: 'Two' }, { label: 'Three' }],
   }: Props = $props();
@@ -44,7 +44,7 @@
 
 <header class="top-bar" bind:this={headerEl} aria-label="Application header">
   <div class="top-bar-left">
-    <img src={wagieUrl} alt="Wagie HUD logo" class="logo" />
+    <img src={wagieUrl} alt="WAGIE HUD logo" class="logo" />
     <h1>{title}</h1>
   </div>
 
