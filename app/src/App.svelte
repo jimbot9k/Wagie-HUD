@@ -87,7 +87,7 @@
     />
     <main>
       <aside aria-label="Statistics and actions">
-        <Card>
+        <Card scrollable>
           <WagieStats />
         </Card>
         <div class="sidebar-buttons" role="group" aria-label="Quick actions">
@@ -146,9 +146,13 @@
   main {
     display: grid;
     grid-template-columns: 360px 1fr;
+    /* Explicit row height so the grid item fills main's constrained height
+       rather than auto-sizing to content (which breaks all flex:1 children). */
+    grid-template-rows: minmax(0, 1fr);
     gap: 0.625rem;
     padding: 0.625rem;
     flex: 1;
+    min-height: 0;
     overflow: hidden;
     box-sizing: border-box;
   }
@@ -157,6 +161,16 @@
   @media (max-width: 1024px) {
     main {
       grid-template-columns: 240px 1fr;
+      overflow: visible;
+    }
+
+    aside {
+      overflow: visible;
+    }
+
+    aside > :global(.card) {
+      flex: none;
+      overflow: visible;
     }
   }
 
@@ -164,6 +178,7 @@
   @media (max-width: 640px) {
     main {
       grid-template-columns: 1fr;
+      grid-template-rows: auto;
       overflow: visible;
       padding: 0.4rem;
       gap: 0.4rem;
@@ -174,9 +189,7 @@
     }
     aside > :global(.card) {
       flex: none;
-    }
-    section {
-      min-height: 320px;
+      overflow: visible;
     }
   }
 
@@ -191,12 +204,18 @@
   aside > :global(.card) {
     flex: 1;
     min-height: 0;
+    overflow: hidden;
   }
 
   section {
     display: flex;
     flex-direction: column;
     gap: 0.41rem;
+    min-height: 0;
+  }
+
+  section > :global(.card) {
+    flex: 1;
     min-height: 0;
   }
 
