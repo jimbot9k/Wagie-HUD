@@ -1,0 +1,35 @@
+# Build outputs
+desktop/build/bin/
+desktop/app/
+app/dist/
+app/dist-desktop/
+
+# Wails generated
+desktop/bindings/
+app/package.json.md5
+
+# Dependencies
+node_modules/
+
+# Go
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+*.log
+*.tsbuildinfo
+.env*
+!.env.example
