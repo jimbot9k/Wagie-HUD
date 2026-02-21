@@ -1,40 +1,46 @@
 /**
- * Platform detection utilities for Wails/Web dual deployment
+ * Platform detection utilities for desktop/web dual deployment
  */
 
-/**
- * Check if running inside Wails desktop application
- */
-export function isWails(): boolean {
-  if (typeof __IS_WAILS__ !== 'undefined') {
-    return __IS_WAILS__;
-  }
-  return typeof window !== 'undefined' && typeof window.go !== 'undefined';
+export enum Platform {
+  Desktop = 'desktop',
+  Web = 'web',
 }
 
 /**
- * Check if running in web browser
+ * Returns the current platform as a Platform enum value.
+ * In production builds the value is injected at build time via __PLATFORM__.
+ * Falls back to runtime detection when the constant is not defined.
  */
+export function getPlatform(): Platform {
+  if (typeof __PLATFORM__ !== 'undefined') {
+    return __PLATFORM__ as Platform;
+  }
+  // Runtime fallback: Wails exposes window.go
+  if (typeof window !== 'undefined' && typeof window.go !== 'undefined') {
+    return Platform.Desktop;
+  }
+  return Platform.Web;
+}
+
+/** Convenience: true when running inside the Wails desktop shell */
+export function isDesktop(): boolean {
+  return getPlatform() === Platform.Desktop;
+}
+
+/** Convenience: true when running in a web browser */
 export function isWeb(): boolean {
-  return !isWails();
+  return getPlatform() === Platform.Web;
 }
 
-/**
- * Execute callback only in Wails environment
- */
-export function onWails<T>(callback: () => T): T | undefined {
-  if (isWails()) {
-    return callback();
-  }
+/** Execute callback only in the desktop environment */
+export function onDesktop<T>(callback: () => T): T | undefined {
+  if (isDesktop()) return callback();
   return undefined;
 }
 
-/**
- * Execute callback only in web environment
- */
+/** Execute callback only in the web environment */
 export function onWeb<T>(callback: () => T): T | undefined {
-  if (isWeb()) {
-    return callback();
-  }
+  if (isWeb()) return callback();
   return undefined;
 }
