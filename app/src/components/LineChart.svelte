@@ -51,6 +51,8 @@
 
   let canvas: HTMLCanvasElement;
   let chart: Chart | null = null;
+  let wrapper: HTMLDivElement;
+  let ro: ResizeObserver;
 
   function buildData(): ChartData<'line'> {
     return {
@@ -72,7 +74,7 @@
 
   function buildOptions(): ChartOptions<'line'> {
     return {
-      responsive: true,
+      responsive: false, // sized manually via ResizeObserver below
       maintainAspectRatio: false,
       plugins: {
         legend: {
@@ -132,9 +134,25 @@
 
   onMount(() => {
     chart = new Chart(canvas, { type: 'line', data: buildData(), options: buildOptions() });
+
+    ro = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry || !chart) return;
+      const { width, height } = entry.contentRect;
+      if (width > 0 && height > 0) chart.resize(width, height);
+    });
+    ro.observe(wrapper);
+
+    // Defer initial resize until after the first paint so flex heights are resolved.
+    requestAnimationFrame(() => {
+      if (!chart) return;
+      const { offsetWidth, offsetHeight } = wrapper;
+      if (offsetWidth > 0 && offsetHeight > 0) chart.resize(offsetWidth, offsetHeight);
+    });
   });
 
   onDestroy(() => {
+    ro?.disconnect();
     chart?.destroy();
   });
 
@@ -147,7 +165,7 @@
   });
 </script>
 
-<div class="chart-wrapper" role="img" aria-label={ariaLabel}>
+<div class="chart-wrapper" role="img" aria-label={ariaLabel} bind:this={wrapper}>
   <canvas bind:this={canvas} aria-hidden="true"></canvas>
 </div>
 
@@ -157,5 +175,30 @@
     width: 100%;
     flex: 1;
     min-height: 0;
+    overflow: hidden;
+  }
+
+  /* At scrollable breakpoints the flex height chain breaks, so use an
+     explicit height that doesn't depend on any ancestor. */
+  @media (max-width: 1024px) {
+    .chart-wrapper {
+      flex: none;
+      height: 420px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .chart-wrapper {
+      height: 320px;
+    }
+  }
+
+  /* position:absolute keeps the canvas from inflating the wrapper when
+     Chart.js writes explicit width/height attributes onto it. */
+  canvas {
+    position: absolute;
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
   }
 </style>

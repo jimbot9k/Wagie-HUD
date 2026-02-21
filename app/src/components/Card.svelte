@@ -5,9 +5,10 @@
     title?: string;
     header?: Snippet;
     children: Snippet;
+    scrollable?: boolean;
   }
 
-  let { title, header, children }: Props = $props();
+  let { title, header, children, scrollable = false }: Props = $props();
 </script>
 
 <div class="card">
@@ -20,7 +21,7 @@
       <h3>{title}</h3>
     </div>
   {/if}
-  <div class="card-body">
+  <div class="card-body" class:scrollable>
     {@render children()}
   </div>
 </div>
@@ -33,7 +34,6 @@
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    height: 100%;
     box-sizing: border-box;
   }
 
@@ -52,6 +52,10 @@
     color: var(--color-text);
     flex: 1;
     min-height: 0;
+    overflow: hidden;
+  }
+
+  .card-body.scrollable {
     overflow-y: auto;
   }
 </style>
