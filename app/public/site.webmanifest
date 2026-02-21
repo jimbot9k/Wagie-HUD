@@ -1,0 +1,17 @@
+{
+  "name": "WAGIE HUD",
+  "short_name": "WAGIE HUD",
+  "description": "Watch your money grow as you slave away in your gilded cage. A satirical earnings tracker for the chronically employed.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a2e",
+  "theme_color": "#a1cc71",
+  "icons": [
+    {
+      "src": "/wagie.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
