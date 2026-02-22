@@ -3,6 +3,7 @@ desktop/build/bin/
 desktop/app/
 app/dist/
 app/dist-desktop/
+app/coverage/
 
 # Wails generated
 desktop/bindings/
